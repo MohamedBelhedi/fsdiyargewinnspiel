@@ -8,10 +8,10 @@ app.secret_key = "dein_geheimes_passwort"  # Für Session-Login
 datenbank = []  # Einfache In-Memory-Datenbank
 
 # Hauptseite
-@app.route("/", methods=["GET", "POST"])
-def callIndex():
-    search = request.form.get("search", "").strip().lower()
-    return render_template("index.html", search=search)
+# @app.route("/", methods=["GET", "POST"])
+# def callIndex():
+#     search = request.form.get("search", "").strip().lower()
+#     return render_template("index.html", search=search)
 
 # Gewinnspiel
 @app.route("/gewinnspiel", methods=["GET", "POST"])
