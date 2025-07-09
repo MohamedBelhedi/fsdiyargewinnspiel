@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Glücksrad</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Eigene Styles -->
+</head>
+<body class="bg-light">
+
+  <div class="container text-center py-5">
+    <h1 class="mb-4">Glücksrad</h1>
+
+    <!-- Glücksrad mit fixem Pfeil -->
+    <div class="wheel-container position-relative d-inline-block">
+      <canvas id="wheelCanvas" width="500" height="500"></canvas>
+      <div class="pointer"></div>
+    </div>
+
+    <button id="spinButton" class="btn btn-primary mt-4" onclick="spinWheel()">Drehen</button>
+    <p class="mt-3" id="resultText"></p>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="resultModalLabel">Dein Gewinn</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+        </div>
+        <div class="modal-body">
+          <form enctype="multipart/form-data" method="post">
+            <div class="mb-2">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Vorname</label>
+              <input type="text" class="form-control" name="vorname" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Adresse</label>
+              <input type="text" class="form-control" name="adresse" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Geburtsdatum</label>
+              <input type="date" class="form-control" name="geb" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Geburtsort</label>
+              <input type="text" class="form-control" name="gebo" required>
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Gewinn</label>
+              <input type="text" class="form-control" id="gewinnInput" name="gewinn" readonly>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+              <button type="submit" class="btn btn-primary">Absenden</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const wheelData = [
+      { label: "50€", color: "#90be6d" },
+      { label: "Erste Hilfe Gutschein", color: "#f9c74f" },
+      { label: "Gratis APP", color: "#f9844a" },
+      { label: "250€", color: "#f8961e" },
+      { label: "Gratis Fahrstunde", color: "#f3722c" },
+      { label: "100€", color: "#f94144" }
+    ];
+
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+    const center = canvas.width / 2;
+    const radius = center - 10;
+    let angle = 0;
+    let spinning = false;
+
+    function drawWheel() {
+      const sliceAngle = (2 * Math.PI) / wheelData.length;
+
+      wheelData.forEach((slice, i) => {
+        const startAngle = i * sliceAngle;
+        const endAngle = startAngle + sliceAngle;
+
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, radius, startAngle, endAngle);
+        ctx.fillStyle = slice.color;
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(center, center);
+        ctx.rotate(startAngle + sliceAngle / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 18px Arial";
+        ctx.fillText(slice.label, radius - 20, 10);
+        ctx.restore();
+      });
+
+      ctx.beginPath();
+      ctx.arc(center, center, 40, 0, 2 * Math.PI);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+    }
+
+    function spinWheel() {
+      if (spinning) return;
+      spinning = true;
+      document.getElementById("spinButton").disabled = true;
+
+      const randomSpin = Math.floor(Math.random() * 360) + 360 * 5;
+      const duration = 5000;
+      const start = performance.now();
+
+      function animateSpin(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        angle = (randomSpin * eased) % 360;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(center, center);
+        ctx.rotate((angle * Math.PI) / 180);
+        ctx.translate(-center, -center);
+        drawWheel();
+        ctx.restore();
+
+        if (progress < 1) {
+          requestAnimationFrame(animateSpin);
+        } else {
+          spinning = false;
+          showResult(angle);
+        }
+      }
+
+      requestAnimationFrame(animateSpin);
+    }
+
+    function showResult(currentAngle) {
+      const sliceAngle = 360 / wheelData.length;
+      const index = Math.floor(((360 - currentAngle + sliceAngle / 2) % 360) / sliceAngle);
+      const result = wheelData[index].label;
+
+      document.getElementById("resultText").innerText = `Ergebnis: ${result}`;
+      document.getElementById("gewinnInput").value = result;
+
+      const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+      resultModal.show();
+    }
+
+    drawWheel();
+  </script>
+</body>
+</html>
