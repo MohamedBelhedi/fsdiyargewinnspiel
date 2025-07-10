@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, send_file, session, url_for
-from io import StringIO
+from io import StringIO, BytesIO
+
 import csv
 
 app = Flask(__name__)
-app.secret_key = "dein_geheimes_passwort"  # Für Session-Login
+app.secret_key = "DiyarSito2022#"  # Für Session-Login
 
 datenbank = []  # Einfache In-Memory-Datenbank
 
@@ -21,6 +22,7 @@ def gewinnSpiel():
             "name": request.form.get("name", ""),
             "vorname": request.form.get("vorname", ""),
             "adresse": request.form.get("adresse", ""),
+            "telefon": request.form.get("telefon", ""),
             "geburtsdatum": request.form.get("geb", ""),
             "geburtsort": request.form.get("gebo", ""),
             "gewinn": request.form.get("gewinn", "")
@@ -38,7 +40,7 @@ def danke():
 def admin_login():
     if request.method == "POST":
         password = request.form.get("password", "")
-        if password == "admin123":  # Einfaches Passwort, du kannst das erweitern
+        if password == "DiyarSito2022#":  # Einfaches Passwort, du kannst das erweitern
             session["admin"] = True
             return redirect("/admin")
         else:
@@ -59,16 +61,24 @@ def export():
         return redirect("/admin-login")
     if not datenbank:
         return "Keine Daten zum Exportieren vorhanden."
-    si = StringIO()
-    writer = csv.DictWriter(si, fieldnames=datenbank[0].keys())
+
+    # Schritt 1: Text mit StringIO erzeugen
+    string_buffer = StringIO()
+    writer = csv.DictWriter(string_buffer, fieldnames=datenbank[0].keys())
     writer.writeheader()
     writer.writerows(datenbank)
-    si.seek(0)
+
+    # Schritt 2: In Bytes konvertieren
+    byte_buffer = BytesIO()
+    byte_buffer.write(string_buffer.getvalue().encode("utf-8"))
+    byte_buffer.seek(0)
+
+    # Schritt 3: senden als Datei
     return send_file(
-        StringIO(si.getvalue()),
-        mimetype='text/csv',
+        byte_buffer,
+        mimetype="text/csv",
         as_attachment=True,
-        download_name='gewinner.csv'
+        download_name="gewinner_aktions.csv"
     )
 
 # Logout
@@ -79,7 +89,7 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=False)
 
 
 
