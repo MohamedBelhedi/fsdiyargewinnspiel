@@ -1,28 +1,66 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
 
-canvas {
-  border: 5px solid #dee2e6;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
 
-.wheel-container {
-  position: relative;
-  display: inline-block;
-}
+  body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-.pointer {
+    canvas {
+      border: 5px solid #dee2e6;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+    }
+
+    .wheel-container {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 500px;
+    }
+ .pointer {
   width: 0;
   height: 0;
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
-  border-bottom: 30px solid red;
+  border-top: 30px solid red;  /* statt border-bottom */
   position: absolute;
-  top: -30px;
+  bottom: 500px; /* statt top */
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
 }
+
+
+    /* Responsive Anpassung */
+    @media (max-width: 768px) {
+      .wheel-container {
+        max-width: 90vw;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .btn {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+      }
+
+      #resultText {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .modal-dialog {
+        max-width: 95%;
+        margin: 1.75rem auto;
+      }
+    }

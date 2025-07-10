@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Glücksrad</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Bootstrap CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,14 +12,13 @@
   {% extends "base.html"%}
 
 <body class="bg-light">
-  {% block content%}
-
+  {% block content %}
   <div class="container text-center py-5">
     <h1 class="mb-4">Glücksrad</h1>
 
     <!-- Glücksrad mit fixem Pfeil -->
     <div class="wheel-container position-relative d-inline-block">
-      <canvas id="wheelCanvas" width="500" height="500"></canvas>
+      <canvas id="wheelCanvas" width="500" height="500" class="img-fluid"></canvas>
       <div class="pointer"></div>
     </div>
 
@@ -86,7 +85,7 @@
       { label: "250€", color: "#f8961e" },
       { label: "Gratis Fahrstunde", color: "#f3722c" },
       { label: "100€", color: "#f94144" },
-      { label: "Anmeldegebühr", color: "#h94146" },
+      { label: "Anmeldegebühr", color: "#e63946" }
     ];
 
     const canvas = document.getElementById("wheelCanvas");
@@ -125,87 +124,51 @@
       ctx.fill();
     }
 
-<!--    function spinWheel() {-->
-<!--      if (spinning) return;-->
-<!--      spinning = true;-->
-<!--      document.getElementById("spinButton").disabled = true;-->
-
-<!--      const randomSpin = Math.floor(Math.random() * 360) + 360 * 5;-->
-<!--      const duration = 5000;-->
-<!--      const start = performance.now();-->
-
-<!--      function animateSpin(now) {-->
-<!--        const elapsed = now - start;-->
-<!--        const progress = Math.min(elapsed / duration, 1);-->
-<!--        const eased = 1 - Math.pow(1 - progress, 3);-->
-<!--        angle = (randomSpin * eased) % 360;-->
-
-<!--        ctx.clearRect(0, 0, canvas.width, canvas.height);-->
-<!--        ctx.save();-->
-<!--        ctx.translate(center, center);-->
-<!--        ctx.rotate((angle * Math.PI) / 180);-->
-<!--        ctx.translate(-center, -center);-->
-<!--        drawWheel();-->
-<!--        ctx.restore();-->
-
-<!--        if (progress < 1) {-->
-<!--          requestAnimationFrame(animateSpin);-->
-<!--        } else {-->
-<!--          spinning = false;-->
-<!--          showResult(angle);-->
-<!--        }-->
-<!--      }-->
-
-<!--      requestAnimationFrame(animateSpin);-->
-<!--    }-->
-
     function spinWheel() {
-  if (spinning) return;
+      if (spinning) return;
 
-  // Prüfen ob der User schon gedreht hat
-  if (localStorage.getItem("hasSpun") === "true") {
-    alert("Wa allah Lo reicht einmal reicht bra Xochkamen 😁");
-    return;
-  }
+      if (localStorage.getItem("hasSpun") === "true") {
+        alert("Wa allah Lo reicht einmal reicht bra Xochkamen 😁");
+        return;
+      }
 
-  spinning = true;
-  document.getElementById("spinButton").disabled = true;
+      spinning = true;
+      document.getElementById("spinButton").disabled = true;
 
-  const randomSpin = Math.floor(Math.random() * 360) + 360 * 5;
-  const duration = 5000;
-  const start = performance.now();
+      const randomSpin = Math.floor(Math.random() * 360) + 360 * 5;
+      const duration = 5000;
+      const start = performance.now();
 
-  function animateSpin(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    angle = (randomSpin * eased) % 360;
+      function animateSpin(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        angle = (randomSpin * eased) % 360;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    ctx.translate(center, center);
-    ctx.rotate((angle * Math.PI) / 180);
-    ctx.translate(-center, -center);
-    drawWheel();
-    ctx.restore();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(center, center);
+        ctx.rotate((angle * Math.PI) / 180);
+        ctx.translate(-center, -center);
+        drawWheel();
+        ctx.restore();
 
-    if (progress < 1) {
+        if (progress < 1) {
+          requestAnimationFrame(animateSpin);
+        } else {
+          spinning = false;
+          localStorage.setItem("hasSpun", "true");
+          showResult(angle);
+        }
+      }
+
       requestAnimationFrame(animateSpin);
-    } else {
-      spinning = false;
-      // Merken dass gedreht wurde
-      localStorage.setItem("hasSpun", "true");
-      showResult(angle);
     }
-  }
-
-  requestAnimationFrame(animateSpin);
-}
-
 
     function showResult(currentAngle) {
       const sliceAngle = 360 / wheelData.length;
-      const index = Math.floor(((360 - currentAngle + sliceAngle / 2) % 360) / sliceAngle);
+      const adjustedAngle = (currentAngle + 122) % 360;
+      const index = Math.floor(((360 - adjustedAngle + sliceAngle / 2) % 360) / sliceAngle);
       const result = wheelData[index].label;
 
       document.getElementById("resultText").innerText = `Ergebnis: ${result}`;
