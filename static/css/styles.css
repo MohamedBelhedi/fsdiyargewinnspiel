@@ -16,22 +16,25 @@
 
     .wheel-container {
       position: relative;
-      display: inline-block;
-      width: 100%;
-      max-width: 500px;
-    }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+}
+
  .pointer {
   width: 0;
   height: 0;
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
-  border-top: 30px solid red;  /* statt border-bottom */
+  border-top: 30px solid red; /* Pfeil zeigt nach unten */
   position: absolute;
-  bottom: 500px; /* statt top */
+  top: 10px; /* nicht mehr bottom */
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
 }
+
 
 
     /* Responsive Anpassung */
