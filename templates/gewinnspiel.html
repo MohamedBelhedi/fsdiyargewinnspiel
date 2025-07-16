@@ -74,112 +74,46 @@
     </div>
   </div>
 
+  <!-- Modal Button (optional, falls du ihn brauchst) -->
+<!--
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#alreadySpunModal">
+  Modal öffnen
+</button>
+-->
+
+<!-- Modal HTML -->
+<div class="modal fade" id="alreadySpunModal" tabindex="-1" aria-labelledby="alreadySpunModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="alreadySpunModalLabel">Hinweis</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <p style="font-size: 1.2rem;">
+          🛑 Wa allah Lo, reicht einmal reicht bra – Xochkamen 😁
+          🛑 والله لا، مرة واحدة تكفي يا أخي – شكراً 😁
+          🛑 والله لا، مرة واحدة تكفي يا أختي – شكراً 😁
+          🛑 Bi Xwede na, carekê têye bra – spas dikim 😁
+          🛑 Bi Xwede na, carekê têye xwişk – spas dikim 😁
+
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Okay</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    const wheelData = [
-      { label: "50€", color: "#90be6d" },
-      { label: "Erste Hilfe Gutschein", color: "#f9c74f" },
-      { label: "Gratis APP", color: "#f9844a" },
-      { label: "250€", color: "#f8961e" },
-      { label: "Gratis Fahrstunde", color: "#f3722c" },
-      { label: "100€", color: "#00ccff" },
-      { label: "Anmeldegebühr", color: "#e63946" }
-    ];
-
-    const canvas = document.getElementById("wheelCanvas");
-    const ctx = canvas.getContext("2d");
-    const center = canvas.width / 2;
-    const radius = center - 10;
-    let angle = 0;
-    let spinning = false;
-
-    function drawWheel() {
-      const sliceAngle = (2 * Math.PI) / wheelData.length;
-
-      wheelData.forEach((slice, i) => {
-        const startAngle = i * sliceAngle;
-        const endAngle = startAngle + sliceAngle;
-
-        ctx.beginPath();
-        ctx.moveTo(center, center);
-        ctx.arc(center, center, radius, startAngle, endAngle);
-        ctx.fillStyle = slice.color;
-        ctx.fill();
-
-        ctx.save();
-        ctx.translate(center, center);
-        ctx.rotate(startAngle + sliceAngle / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 18px Arial";
-        ctx.fillText(slice.label, radius - 20, 10);
-        ctx.restore();
-      });
-
-      ctx.beginPath();
-      ctx.arc(center, center, 40, 0, 2 * Math.PI);
-      ctx.fillStyle = "#fff";
-      ctx.fill();
-    }
-
-    function spinWheel() {
-      if (spinning) return;
-
-      if (localStorage.getItem("hasSpun") === "true") {
-        alert("Wa allah Lo reicht einmal reicht bra Xochkamen 😁");
-        return;
-      }
-
-      spinning = true;
-      document.getElementById("spinButton").disabled = true;
-
-      const randomSpin = Math.floor(Math.random() * 360) + 360 * 5;
-      const duration = 5000;
-      const start = performance.now();
-
-      function animateSpin(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        angle = (randomSpin * eased) % 360;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.translate(center, center);
-        ctx.rotate((angle * Math.PI) / 180);
-        ctx.translate(-center, -center);
-        drawWheel();
-        ctx.restore();
-
-        if (progress < 1) {
-          requestAnimationFrame(animateSpin);
-        } else {
-          spinning = false;
-          localStorage.setItem("hasSpun", "true");
-          showResult(angle);
-        }
-      }
-
-      requestAnimationFrame(animateSpin);
-    }
-
-    function showResult(currentAngle) {
-      const sliceAngle = 360 / wheelData.length;
-      const adjustedAngle = (currentAngle + 122) % 360;
-      const index = Math.floor(((360 - adjustedAngle + sliceAngle / 2) % 360) / sliceAngle);
-      const result = wheelData[index].label;
-
-      document.getElementById("resultText").innerText = `Ergebnis: ${result}`;
-      document.getElementById("gewinnInput").value = result;
-
-      const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
-      resultModal.show();
-    }
-
-    drawWheel();
-  </script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   {% endblock %}
 </body>
 </html>

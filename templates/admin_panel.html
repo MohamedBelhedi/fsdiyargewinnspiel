@@ -10,8 +10,13 @@
   <div class="container py-5">
     <h2 class="mb-4">Gewinnspiel Teilnehmer</h2>
 
+    {% if aktionsEnde %}
+      <p><strong>Aktionsende:</strong> {{ aktionsEnde }}</p>
+    {% endif %}
+
     <div class="mb-3">
       <a href="/export" class="btn btn-success">Als CSV exportieren</a>
+      <a href="/logout" class="btn btn-secondary">Logout</a>
     </div>
 
     <table class="table table-bordered table-hover">
@@ -40,6 +45,14 @@
         {% endfor %}
       </tbody>
     </table>
+
+    <hr>
+    <h5>Aktionszeitraum festlegen</h5>
+    <form method="post" action="/admin-login">
+      <input type="date" name="dateEnde" class="form-control mb-2" required />
+      <input type="password" name="password" class="form-control mb-2" placeholder="Admin-Passwort" required />
+      <button type="submit" class="btn btn-primary">Aktionszeit speichern</button>
+    </form>
   </div>
 </body>
 </html>
