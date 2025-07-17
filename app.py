@@ -32,7 +32,7 @@ def gewinnSpiel():
         datenbank.append(eintrag)
         return redirect("/danke")
 
-    return render_template("gewinnspiel.html")
+    return render_template("gewinnspiel.html", aktionsEnde=aktionsEnde)
 
 
 @app.route("/danke")
@@ -102,7 +102,7 @@ def export():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return redirect("/gewinnspiel")
 
 
 if __name__ == '__main__':
