@@ -77,6 +77,7 @@ def admin():
 
 @app.route("/export")
 def export():
+    heute = dt.date.today()
     if not session.get("admin"):
         return redirect("/admin-login")
     if not datenbank:
@@ -95,7 +96,7 @@ def export():
         byte_buffer,
         mimetype="text/csv",
         as_attachment=True,
-        download_name="gewinner_aktions.csv"
+        download_name=f"gewinner_aktions{heute}.csv"
     )
 
 
